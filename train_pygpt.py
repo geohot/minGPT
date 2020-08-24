@@ -17,7 +17,8 @@ class CharDataset(Dataset):
     self.data = data
   
   def __len__(self):
-    return math.ceil(len(self.data) / (self.block_size + 1))
+    #return math.ceil(len(self.data) / (self.block_size + 1))
+    return 1024*128
 
   def __getitem__(self, idx):
     # we're actually going to "cheat" and pick a spot in the dataset at random
@@ -30,8 +31,10 @@ class CharDataset(Dataset):
 
 
 if __name__ == "__main__":
+  print("starting")
+
   block_size = 128
-  text = open("/raid.dell2/pygpt/pydata_test.txt") #.read(1024*1024*4)
+  text = open("/raid.dell2/pygpt/pydata_test.txt").read() #.read(1024*1024*4)
   train_dataset = CharDataset(text, block_size)
 
   from mingpt.model import GPT, GPTConfig
@@ -39,13 +42,13 @@ if __name__ == "__main__":
                     n_layer=12, n_head=12, n_embd=768)
   model = GPT(mconf)
 
-  model.load_state_dict(torch.load("/raid.dell2/pygpt/model.state"))
+  #model.load_state_dict(torch.load("/raid.dell2/pygpt/model.state"))
   
   from mingpt.trainer import Trainer, TrainerConfig
   tconf = TrainerConfig(max_epochs=200, batch_size=128, learning_rate=6e-4,
                         lr_decay=True, warmup_tokens=512*20,
                         final_tokens=200*len(train_dataset)*block_size,
-                        ckpt_path="/tmp/pygpt",
+                        ckpt_path="/raid.dell2/pygpt/model.state",
                         num_workers=4)
   trainer = Trainer(model, train_dataset, None, tconf)
   trainer.train()
