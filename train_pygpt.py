@@ -6,7 +6,8 @@ from torch.utils.data import Dataset
 
 class CharDataset(Dataset):
   def __init__(self, data, block_size):
-    chars = sorted(list(set(data)))
+    #chars = sorted(list(set(data)))
+    chars = '\x00\t\n !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~'
     data_size, vocab_size = len(data), len(chars)
     print('data has %d characters, %d unique.' % (data_size, vocab_size))
     
@@ -39,13 +40,13 @@ if __name__ == "__main__":
 
   from mingpt.model import GPT, GPTConfig
   mconf = GPTConfig(train_dataset.vocab_size, train_dataset.block_size,
-                    n_layer=12, n_head=12, n_embd=768)
+                    n_layer=8, n_head=8, n_embd=512)
   model = GPT(mconf)
 
   #model.load_state_dict(torch.load("/raid.dell2/pygpt/model.state"))
   
   from mingpt.trainer import Trainer, TrainerConfig
-  tconf = TrainerConfig(max_epochs=200, batch_size=128, learning_rate=6e-4,
+  tconf = TrainerConfig(max_epochs=200, batch_size=128*2, learning_rate=6e-4,
                         lr_decay=True, warmup_tokens=512*20,
                         final_tokens=200*len(train_dataset)*block_size,
                         ckpt_path="/raid.dell2/pygpt/model.state",
