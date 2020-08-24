@@ -31,15 +31,15 @@ class CharDataset(Dataset):
 
 if __name__ == "__main__":
   block_size = 128
-  text = open("/raid.dell2/pygpt/pydata_test.txt").read(1024*1024*4)
+  text = open("/raid.dell2/pygpt/pydata_test.txt") #.read(1024*1024*4)
   train_dataset = CharDataset(text, block_size)
 
   from mingpt.model import GPT, GPTConfig
   mconf = GPTConfig(train_dataset.vocab_size, train_dataset.block_size,
-                    n_layer=8, n_head=8, n_embd=512)
+                    n_layer=12, n_head=12, n_embd=768)
   model = GPT(mconf)
 
-  model.load_state_dict(torch.load("/tmp/pygpt"))
+  model.load_state_dict(torch.load("/raid.dell2/pygpt/model.state"))
   
   from mingpt.trainer import Trainer, TrainerConfig
   tconf = TrainerConfig(max_epochs=200, batch_size=128, learning_rate=6e-4,
